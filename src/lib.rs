@@ -7,13 +7,6 @@ impl Label {
     pub fn to_zpl(&self) -> String {
         let mut zpl = String::new();
 
-        // Add the image data
-        for element in &self.elements {
-            if let ElementType::Image(path) = &element.typ {
-                zpl.push_str(&image_to_zpl(path));
-            }
-        }
-
         // Add the elements
         for element in &self.elements {
             zpl.push_str(&element.to_zpl());
@@ -56,7 +49,7 @@ impl ElementType {
     pub fn to_zpl(&self, x: u32, y: u32) -> String {
         match self {
             ElementType::Image(path) => {
-                format!("^FO{},{}^XG{}^FS\n", x, y, path.split('/').last().unwrap())
+                format!("^FO{},{}{}^FS\n", x, y, image_to_zpl(path))
             }
             ElementType::Text(text) => format!("^FO{},{}^FD{}^FS\n", x, y, text),
             ElementType::Barcode { typ, data } => format!(
